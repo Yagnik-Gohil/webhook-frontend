@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen bg-zinc-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
       <div className="max-w-md w-full space-y-8 text-center">
         <div className="space-y-4">
           <AlertTriangle className="mx-auto h-24 w-24 text-zinc-400" />

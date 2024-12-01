@@ -9,21 +9,24 @@ import SignUp from "./pages/SignUp";
 function App() {
   const location = useLocation();
 
-  const publicRoutes = ["/login"];
+  const publicRoutes = ["/login", "/signup"];
+  const isPublicRoute = publicRoutes.includes(location.pathname);
 
   return (
     <div className="flex min-h-screen bg-zinc-50 text-zinc-900 select-none">
       <Toaster position="top-right" reverseOrder={false} />
 
-      {!publicRoutes.includes(location.pathname) && <Sidebar />}
-      <main className="flex-1 p-6 lg:ml-64">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
+      {!isPublicRoute && <Sidebar />}
+      <div className="flex-1 flex flex-col">
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </div>
     </div>
   );
 }

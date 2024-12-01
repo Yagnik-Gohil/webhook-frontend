@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Home,
   LayoutDashboard,
@@ -18,10 +18,11 @@ const navItems = [
 ];
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <>
+    <div className="w-0 lg:w-64 h-full flex">
       <button
         className="fixed top-4 left-4 z-50 p-2 bg-zinc-200 rounded-md lg:hidden"
         onClick={() => setIsOpen(!isOpen)}
@@ -36,7 +37,9 @@ const Sidebar = () => {
       >
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-center h-16 bg-zinc-200">
-            <NavLink to={"/"}  className="text-2xl font-bold text-zinc-800">Webhook</NavLink>
+            <NavLink to={"/"} className="text-2xl font-bold text-zinc-800">
+              Webhook
+            </NavLink>
           </div>
 
           <nav className="flex-1 overflow-y-auto py-4">
@@ -62,11 +65,13 @@ const Sidebar = () => {
           </nav>
 
           <div className="p-4 border-t border-zinc-200">
-            <Button className="w-full">Logout</Button>
+            <Button className="w-full" onClick={() => navigate("/login")}>
+              Logout
+            </Button>
           </div>
         </div>
       </aside>
-    </>
+    </div>
   );
 };
 
