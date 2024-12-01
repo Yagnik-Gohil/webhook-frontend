@@ -64,21 +64,20 @@ const SubscriptionDetails = () => {
     },
   });
 
-  const { watch, setValue } = form;
+  const { watch } = form;
 
   // Watch the selected source
   const selectedSource = watch("source");
 
   useEffect(() => {
-    // Find the events for the selected source
     const source = sourceList.find((item) => item.id === selectedSource);
     if (source) {
       setEventList(source.events);
-      setValue("events", [""]);
+      form.setValue("events", []);
     } else {
       setEventList([]);
     }
-  }, [selectedSource]);
+  }, [selectedSource, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const response = await createSubscription(values);
