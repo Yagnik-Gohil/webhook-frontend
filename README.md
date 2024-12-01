@@ -16,14 +16,16 @@ npm install
 ```
 
 ### Run Project
+
+- Start the webhook-backend.
+
+- Start the webhook-simulator.
+
+- Start the webhook-frontend by below command.
 ```
 npm run dev
 ```
 - Go to `http://localhost:5173` and verify front-end is live.
-
-- Start the webhook-backend and complete signup
-
-- start the webhook-simulator.
 
 - To receive events, Go to subscription page and subscribe to all the services
 

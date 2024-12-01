@@ -10,7 +10,8 @@ const NoEventsMessage = () => {
         <h2 className="text-lg font-medium text-zinc-900 mb-4">
           If you do not receive any events, try subscribing to events from the subscription page...
         </h2>
-        <p className="text-sm clear-start pb-6">Hint: Subscribe to all services to receive more events</p>
+        <p className="text-sm clear-start pb-4">Subscribe to all services to receive more events</p>
+        <p className="text-sm clear-start pb-6">Make sure that webhook-backend & webhook-simulator are up & running</p>
         <Button
           variant="outline"
           onClick={() => navigate("/subscription")}  // Navigates to the subscription page
