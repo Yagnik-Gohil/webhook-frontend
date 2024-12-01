@@ -20,6 +20,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { MultiSelect } from "@/components/multi-select";
 import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   source: z.string(),
@@ -111,7 +112,7 @@ const SubscriptionDetails = () => {
     defaultValues: {
       source: "",
       events: [],
-      callback_url: "https://example.com/callback-url",
+      callback_url: "http://localhost:4000/callback",
     },
   });
 
@@ -199,6 +200,26 @@ const SubscriptionDetails = () => {
                   </FormControl>
                   <FormDescription>
                     Choose the events you are interested in.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="callback_url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Callback URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://example.com/callback"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Backend simply forwards the data to this URL after
+                    receiving them from the webhook simulator.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -40,6 +42,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MultiSelect } from "@/components/multi-select";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   events: z
@@ -108,7 +111,7 @@ const Subscription = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       events: [],
-      callback_url: "https://example.com/callback-url",
+      callback_url: "http://localhost:4000/callback",
     },
   });
 
@@ -207,6 +210,7 @@ const Subscription = () => {
                 name="events"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Events</FormLabel>
                     <FormControl>
                       <MultiSelect
                         options={eventList.map((item) => {
@@ -220,6 +224,26 @@ const Subscription = () => {
                         maxCount={10}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="callback_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Callback URL</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://example.com/callback"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Backend simply forwards the data to this URL after
+                      receiving them from the webhook simulator.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
