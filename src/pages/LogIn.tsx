@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Form,
   FormControl,
@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { login } from "@/api/auth.service";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -23,6 +24,8 @@ const formSchema = z.object({
 });
 
 const LogIn = () => {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,8 +34,18 @@ const LogIn = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const response = await login({
+      email: values.email,
+      password: values.password,
+      device_id: "92ee6562-0150-4f15-81f5-69c79ad3ebd1",
+    });
+
+    if (response.status) {
+      const data = response.data;
+      localStorage.setItem("token", data.jwt);
+      navigate("/");
+    }
   }
 
   return (
@@ -67,7 +80,7 @@ const LogIn = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input {...field} type="password" />
+                      <Input {...field} type="password"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -13,6 +13,7 @@ const Pagination = ({
   offset,
   limit,
   total,
+  setOffset,
   setLimit,
   handlePreviousPage,
   handleNextPage,
@@ -20,6 +21,7 @@ const Pagination = ({
   offset: number;
   limit: number;
   total: number;
+  setOffset: React.Dispatch<React.SetStateAction<number>>;
   setLimit: React.Dispatch<React.SetStateAction<number>>;
   handlePreviousPage: () => void;
   handleNextPage: () => void;
@@ -33,9 +35,14 @@ const Pagination = ({
   return (
     <div className="flex justify-between items-center mt-4 p-4 gap-4 font-medium border border-gray-300 rounded-lg shadow-md bg-white absolute">
       <div className="flex items-center space-x-2">
-        <Select onValueChange={(value) => setLimit(Number(value))}>
+        <Select
+          onValueChange={(value) => {
+            setLimit(Number(value)); // Update the limit
+            setOffset(0); // Reset offset to 0
+          }}
+        >
           <SelectTrigger>
-            <SelectValue placeholder={limit} />
+            <SelectValue placeholder={String(limit)} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup className="font-medium">
@@ -70,7 +77,9 @@ const Pagination = ({
       </div>
 
       <div className="text-gray-700 font-medium">
-        {total > 0 ? `Showing ${start} to ${end} of ${total} entries` : "No entries to display"}
+        {total > 0
+          ? `Showing ${start} to ${end} of ${total} entries`
+          : "No entries to display"}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { LayoutDashboard, FileText, Menu, X, History } from "lucide-react";
 import { Button } from "./button";
+import { logout } from "@/api/auth.service";
 
 const navItems = [
   { name: "Home", path: "/", icon: LayoutDashboard },
@@ -12,6 +13,12 @@ const navItems = [
 const Sidebar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   return (
     <div className="w-0 lg:w-64 h-full flex">
@@ -57,7 +64,7 @@ const Sidebar = () => {
           </nav>
 
           <div className="p-4 border-t border-zinc-200">
-            <Button className="w-full" onClick={() => navigate("/login")}>
+            <Button className="w-full" onClick={handleLogout}>
               Logout
             </Button>
           </div>
