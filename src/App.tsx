@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
+import Subscription from "./pages/Subscription";
+import SubscriptionDetails from "./pages/SubscriptionDetails";
 
 function App() {
   const location = useLocation();
@@ -21,6 +23,11 @@ function App() {
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/subscription" element={<Subscription />} />
+            <Route
+              path="/subscription/:id"
+              element={<SubscriptionDetails />}
+            />
             <Route path="/login" element={<LogIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="*" element={<NotFound />} />

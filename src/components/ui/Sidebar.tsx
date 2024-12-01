@@ -1,20 +1,11 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  Home,
-  LayoutDashboard,
-  FileText,
-  Settings,
-  Menu,
-  X,
-} from "lucide-react";
+import { LayoutDashboard, FileText, Menu, X } from "lucide-react";
 import { Button } from "./button";
 
 const navItems = [
-  { name: "Home", path: "/", icon: Home },
-  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { name: "Forms", path: "/forms", icon: FileText },
-  { name: "Settings", path: "/settings", icon: Settings },
+  { name: "Home", path: "/", icon: LayoutDashboard },
+  { name: "Subscription", path: "/subscription", icon: FileText },
 ];
 
 const Sidebar = () => {
