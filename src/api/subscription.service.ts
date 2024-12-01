@@ -23,6 +23,18 @@ export const getSubscription = async (
   );
 };
 
+export const createSubscription = async (data: {
+  source: string;
+  events: string[];
+  callback_url: string;
+}): Promise<{
+  status: number;
+  message: string;
+  data: ISubscription;
+}> => {
+  return apiHelper(axiosInstance.post("/subscription", data), true);
+};
+
 export const deleteSubscription = async (
   id: string
 ): Promise<{

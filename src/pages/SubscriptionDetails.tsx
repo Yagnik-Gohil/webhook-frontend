@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import { MultiSelect } from "@/components/multi-select";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { createSubscription } from "@/api/subscription.service";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   source: z.string(),
@@ -32,6 +34,8 @@ const formSchema = z.object({
 });
 
 const SubscriptionDetails = () => {
+  const navigate = useNavigate();
+
   const sourceList = [
     {
       id: "2f978c43-45e6-4c45-8a8f-3971c882339a",
@@ -132,8 +136,12 @@ const SubscriptionDetails = () => {
     }
   }, [selectedSource]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const response = await createSubscription(values);
+
+    if (response.status) {
+      navigate("/subscription");
+    }
   }
 
   return (
@@ -218,8 +226,8 @@ const SubscriptionDetails = () => {
                     />
                   </FormControl>
                   <FormDescription>
-                    Backend simply forwards the data to this URL after
-                    receiving them from the webhook simulator.
+                    Backend simply forwards the data to this URL after receiving
+                    them from the webhook simulator.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
