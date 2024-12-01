@@ -47,10 +47,12 @@ import { ISubscription } from "@/types";
 import {
   deleteSubscription,
   getSubscription,
+  updateSubscription,
 } from "@/api/subscription.service";
 import DataNotFound from "@/components/DataNotFound";
 
 const formSchema = z.object({
+  source: z.string().uuid(),
   events: z
     .array(z.string().min(1))
     .min(1)
@@ -63,23 +65,26 @@ const Subscription = () => {
 
   const [list, setList] = useState<ISubscription[]>([]);
 
-  const [eventList, setEventList] = useState<string[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [allEventList, setAllEventList] = useState<string[]>([]);
+  const [selectedEventList, setSelectedEventList] = useState<string[]>([]);
+  const [selected, setSelected] = useState<ISubscription | null>(null);
 
   const fetchList = async () => {
     const result = await getSubscription();
     setList(result.data);
   };
 
-  const handleEventList = (list: string[]) => {
-    setEventList(list);
+  const handleEventList = (subscription: ISubscription) => {
+    setSelected(subscription);
+    setAllEventList(subscription.source.events);
+    setSelectedEventList(subscription.events);
   };
 
   const handleDelete = async () => {
-    if (selectedId) {
-      const result = await deleteSubscription(selectedId);
+    if (selected) {
+      const result = await deleteSubscription(selected.id);
       if (result.status) {
-        setSelectedId(null);
+        setSelected(null);
         fetchList();
       }
     }
@@ -92,13 +97,29 @@ const Subscription = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      events: [],
-      callback_url: "http://localhost:4000/callback",
+      source: selected?.source.id,
+      events: selected?.events,
+      callback_url: selected?.callback_url,
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  useEffect(() => {
+    if (selected) {
+      form.reset({
+        source: selected.source.id,
+        events: selected.events,
+        callback_url: selected.callback_url,
+      });
+    }
+  }, [selected, form]);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (selected) {
+      const response = await updateSubscription(selected.id, values);
+      if (response.status) {
+        window.location.reload();
+      }
+    }
   }
 
   return (
@@ -120,6 +141,7 @@ const Subscription = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Service</TableHead>
+                <TableHead>Callback URL</TableHead>
                 <TableHead>Created At</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -136,6 +158,7 @@ const Subscription = () => {
                       />
                       {subscription.source.name}
                     </TableCell>
+                    <TableCell>{subscription.callback_url}</TableCell>
                     <TableCell>
                       {new Date(subscription.created_at).toDateString()}
                     </TableCell>
@@ -145,9 +168,7 @@ const Subscription = () => {
                           variant="outline"
                           size="sm"
                           className="ml-2"
-                          onClick={() =>
-                            handleEventList(subscription.source.events)
-                          }
+                          onClick={() => handleEventList(subscription)}
                         >
                           <Pencil className="h-4 w-4 mr-1" />
                           Edit
@@ -159,7 +180,7 @@ const Subscription = () => {
                           variant="outline"
                           size="sm"
                           className="ml-2"
-                          onClick={() => setSelectedId(subscription.id)}
+                          onClick={() => setSelected(subscription)}
                         >
                           <Trash2 className="h-4 w-4 mr-1" />
                           Delete
@@ -210,15 +231,16 @@ const Subscription = () => {
                     <FormLabel>Events</FormLabel>
                     <FormControl>
                       <MultiSelect
-                        options={eventList.map((item) => {
+                        options={allEventList.map((item) => {
                           return { label: item, value: item };
                         })}
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        defaultValue={selectedEventList}
                         placeholder="Select Events"
                         className="text-zinc-800 font-normal"
                         variant="inverted"
                         maxCount={10}
+                        value={selectedEventList}
                       />
                     </FormControl>
                     <FormMessage />
@@ -235,6 +257,7 @@ const Subscription = () => {
                       <Input
                         placeholder="https://example.com/callback"
                         {...field}
+                        value={form.watch("callback_url")}
                       />
                     </FormControl>
                     <FormDescription>

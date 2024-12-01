@@ -35,6 +35,21 @@ export const createSubscription = async (data: {
   return apiHelper(axiosInstance.post("/subscription", data), true);
 };
 
+export const updateSubscription = async (
+  id: string,
+  data: {
+    source: string;
+    events: string[];
+    callback_url: string;
+  }
+): Promise<{
+  status: number;
+  message: string;
+  data: ISubscription;
+}> => {
+  return apiHelper(axiosInstance.patch(`/subscription/${id}`, data), true);
+};
+
 export const deleteSubscription = async (
   id: string
 ): Promise<{
