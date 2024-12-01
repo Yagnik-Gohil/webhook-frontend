@@ -15,7 +15,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Eye } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Delete, Eye } from "lucide-react";
+import Pagination from "@/components/Pagination";
+import { useState } from "react";
 
 interface EventHistory {
   id: string;
@@ -353,10 +363,54 @@ const eventHistory: EventHistory[] = [
 ];
 
 const EventHistory = () => {
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  const handleNextPage = () => {
+    if (offset + limit < total) {
+      setOffset((prevOffset) => prevOffset + limit);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (offset > 0) {
+      setOffset((prevOffset) => prevOffset - limit);
+    }
+  };
   return (
     <div className="container mx-auto p-10">
-      <div className="flex">
+      <div className="flex justify-between">
         <h1 className="text-3xl font-bold mb-6 text-zinc-900">Event History</h1>
+
+        <div className="flex flex-row gap-2">
+          <Select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Service" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="stripe">Stripe</SelectItem>
+                <SelectItem value="discord">Discord</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Event" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="stripe">Stripe</SelectItem>
+                <SelectItem value="discord">Discord</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Button variant="outline">
+            <Delete />
+            Clear Filter
+          </Button>
+        </div>
       </div>
       <Table>
         <TableHeader>
@@ -406,6 +460,15 @@ const EventHistory = () => {
           ))}
         </TableBody>
       </Table>
+
+      <Pagination
+        offset={offset}
+        limit={limit}
+        total={total}
+        setLimit={setLimit}
+        handlePreviousPage={handlePreviousPage}
+        handleNextPage={handleNextPage}
+      />
     </div>
   );
 };

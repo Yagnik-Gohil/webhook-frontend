@@ -191,7 +191,8 @@ const SubscriptionDetails = () => {
                       })}
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      placeholder="Select options"
+                      placeholder="Select Events"
+                      className="text-zinc-800 font-normal"
                       variant="inverted"
                       maxCount={10}
                     />
