@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, Menu, X } from "lucide-react";
+import { LayoutDashboard, FileText, Menu, X, History } from "lucide-react";
 import { Button } from "./button";
 
 const navItems = [
   { name: "Home", path: "/", icon: LayoutDashboard },
   { name: "Subscription", path: "/subscription", icon: FileText },
+  { name: "Event History", path: "/event-history", icon: History },
 ];
 
 const Sidebar = () => {

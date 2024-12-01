@@ -7,6 +7,7 @@ import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Subscription from "./pages/Subscription";
 import SubscriptionDetails from "./pages/SubscriptionDetails";
+import EventHistory from "./pages/EventHistory";
 
 function App() {
   const location = useLocation();
@@ -28,6 +29,7 @@ function App() {
               path="/subscription/:id"
               element={<SubscriptionDetails />}
             />
+            <Route path="/event-history" element={<EventHistory />} />
             <Route path="/login" element={<LogIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="*" element={<NotFound />} />
