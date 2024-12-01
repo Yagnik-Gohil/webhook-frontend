@@ -435,7 +435,14 @@ const EventHistory = () => {
               </TableCell>
               <TableCell>{item.payload.event}</TableCell>
               <TableCell>{item.description}</TableCell>
-              <TableCell>{new Date(item.created_at).toDateString()}</TableCell>
+              <TableCell>
+                {new Date(item.created_at).toDateString()}{" | "}
+                {new Date(item.created_at).toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
+              </TableCell>
               <TableCell className="text-end">
                 <Sheet>
                   <SheetTrigger asChild>

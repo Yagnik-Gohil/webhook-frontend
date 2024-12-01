@@ -31,7 +31,7 @@ const Pagination = ({
   const end = Math.min(offset + limit, total);
 
   return (
-    <div className="flex justify-between items-center mt-4 p-4 gap-4 font-medium border border-gray-300 rounded-lg shadow-md bg-white absolute right-5 bottom-5">
+    <div className="flex justify-between items-center mt-4 p-4 gap-4 font-medium border border-gray-300 rounded-lg shadow-md bg-white absolute">
       <div className="flex items-center space-x-2">
         <Select onValueChange={(value) => setLimit(Number(value))}>
           <SelectTrigger>
