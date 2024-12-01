@@ -191,8 +191,8 @@ const Subscription = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-center">
-                    <DataNotFound></DataNotFound>
+                  <TableCell colSpan={4} className="text-center">
+                    <DataNotFound message="You haven't subscribed to any service."></DataNotFound>
                   </TableCell>
                 </TableRow>
               )}
