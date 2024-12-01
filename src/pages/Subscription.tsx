@@ -75,11 +75,13 @@ const Subscription = () => {
     setEventList(list);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedId) {
-      deleteSubscription(selectedId);
-      setSelectedId(null);
-      fetchList();
+      const result = await deleteSubscription(selectedId);
+      if (result.status) {
+        setSelectedId(null);
+        fetchList();
+      }
     }
   };
 

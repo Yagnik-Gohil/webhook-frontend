@@ -22,3 +22,24 @@ export const getSubscribedService = async (
     })
   );
 };
+
+export const getUnSubscribedService = async (
+  limit: number = 10,
+  offset: number = 0
+): Promise<{
+  status: number;
+  message: string;
+  total: number;
+  limit: number;
+  offset: number;
+  data: ISource[];
+}> => {
+  return apiHelper(
+    axiosInstance.get("/source", {
+      params: {
+        limit,
+        offset,
+      },
+    })
+  );
+};

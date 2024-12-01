@@ -23,6 +23,8 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { createSubscription } from "@/api/subscription.service";
 import { useNavigate } from "react-router-dom";
+import { ISource } from "@/types";
+import { getUnSubscribedService } from "@/api/source.service";
 
 const formSchema = z.object({
   source: z.string(),
@@ -35,81 +37,23 @@ const formSchema = z.object({
 
 const SubscriptionDetails = () => {
   const navigate = useNavigate();
-
-  const sourceList = [
-    {
-      id: "2f978c43-45e6-4c45-8a8f-3971c882339a",
-      created_at: "2024-11-30T06:35:01.232Z",
-      status: "active",
-      name: "Stripe",
-      description:
-        "Stripe is a payment processing platform that enables businesses to accept online payments.",
-      events: [
-        "PAYMENT_SUCCEEDED",
-        "PAYMENT_FAILED",
-        "REFUND_CREATED",
-        "SUBSCRIPTION_CANCELED",
-      ],
-      thumbnail: "https://d21r3yo3pas5u.cloudfront.net/webhook/stripe.png",
-    },
-    {
-      id: "f2f29b40-f3fb-4184-8942-557092154a63",
-      created_at: "2024-11-30T06:35:01.232Z",
-      status: "active",
-      name: "Discord",
-      description:
-        "Discord is a communication platform for gamers, with text, voice, and video chat.",
-      events: [
-        "MESSAGE_CREATED",
-        "USER_JOINED",
-        "USER_LEFT",
-        "MESSAGE_DELETED",
-      ],
-      thumbnail: "https://d21r3yo3pas5u.cloudfront.net/webhook/discord.png",
-    },
-    {
-      id: "2afd870d-fb21-4fc6-9022-ade305a81a6a",
-      created_at: "2024-11-30T06:35:01.232Z",
-      status: "active",
-      name: "GitHub",
-      description:
-        "GitHub is a platform for version control and collaboration, allowing developers to work together on projects.",
-      events: [
-        "PUSH",
-        "ISSUE_OPENED",
-        "PULL_REQUEST_MERGED",
-        "REPOSITORY_CREATED",
-      ],
-      thumbnail: "https://d21r3yo3pas5u.cloudfront.net/webhook/github.png",
-    },
-    {
-      id: "6dea7582-e9f6-4c3f-ab20-a59db368efe7",
-      created_at: "2024-11-30T06:35:01.232Z",
-      status: "active",
-      name: "PayPal",
-      description:
-        "PayPal is an online payment system that supports online money transfers.",
-      events: ["PAYMENT_RECEIVED", "PAYMENT_REFUNDED", "INVOICE_PAID"],
-      thumbnail: "https://d21r3yo3pas5u.cloudfront.net/webhook/paypal.png",
-    },
-    {
-      id: "94e9773f-1829-49de-9a02-c0114f3f56a8",
-      created_at: "2024-11-30T06:35:01.232Z",
-      status: "active",
-      name: "Twilio",
-      description:
-        "Twilio is a cloud communications platform that provides APIs for sending messages, making calls, and more.",
-      events: [
-        "SMS_SENT",
-        "CALL_RECEIVED",
-        "CALL_COMPLETED",
-        "MESSAGE_DELIVERED",
-      ],
-      thumbnail: "https://d21r3yo3pas5u.cloudfront.net/webhook/twilio.png",
-    },
-  ];
-
+  const [sourceList, setSourceList] = useState<ISource[]>([]);
   const [eventList, setEventList] = useState<string[]>([]);
+
+  const [isSubscribedToAll, setIsSubscribedToAll] = useState(false);
+
+  const fetchService = async () => {
+    const result = await getUnSubscribedService();
+
+    if (result.data.length == 0 && result.status == 1) {
+      setIsSubscribedToAll(true);
+    }
+    setSourceList(result.data);
+  };
+
+  useEffect(() => {
+    fetchService();
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -161,6 +105,7 @@ const SubscriptionDetails = () => {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    disabled={isSubscribedToAll}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -188,6 +133,7 @@ const SubscriptionDetails = () => {
               )}
             />
             <FormField
+              disabled={isSubscribedToAll}
               control={form.control}
               name="events"
               render={({ field }) => (
@@ -195,6 +141,7 @@ const SubscriptionDetails = () => {
                   <FormLabel>Events</FormLabel>
                   <FormControl>
                     <MultiSelect
+                      disabled={isSubscribedToAll}
                       options={eventList.map((item) => {
                         return { label: item, value: item };
                       })}
@@ -223,6 +170,7 @@ const SubscriptionDetails = () => {
                     <Input
                       placeholder="https://example.com/callback"
                       {...field}
+                      disabled={isSubscribedToAll}
                     />
                   </FormControl>
                   <FormDescription>
@@ -233,8 +181,13 @@ const SubscriptionDetails = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
-              Subscribe
+            <Button
+              className="w-full"
+              type={isSubscribedToAll ? "reset" : "submit"}
+            >
+              {isSubscribedToAll
+                ? "You have subscribed to all the services"
+                : "Subscribe"}
             </Button>
           </form>
         </Form>
