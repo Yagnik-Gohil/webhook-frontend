@@ -41,8 +41,14 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MultiSelect } from "@/components/multi-select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { ISubscription } from "@/types";
+import {
+  deleteSubscription,
+  getSubscription,
+} from "@/api/subscription.service";
+import DataNotFound from "@/components/DataNotFound";
 
 const formSchema = z.object({
   events: z
@@ -52,60 +58,34 @@ const formSchema = z.object({
   callback_url: z.string(),
 });
 
-interface Subscription {
-  id: string;
-  created_at: string;
-  status: string;
-  events: string[];
-  callback_url: string;
-  source: {
-    id: string;
-    created_at: string;
-    status: string;
-    name: string;
-    description: string;
-    events: string[];
-    thumbnail: string;
-  };
-}
-
-const subscriptions: Subscription[] = [
-  {
-    id: "317a6561-ab7f-49b9-be64-7349b5ab9424",
-    created_at: "2024-11-30T07:22:17.010Z",
-    status: "active",
-    events: [
-      "PAYMENT_SUCCEEDED",
-      "PAYMENT_FAILED",
-      "REFUND_CREATED",
-      "SUBSCRIPTION_CANCELED",
-    ],
-    callback_url: "https://example.dev/callback-url",
-    source: {
-      id: "2f978c43-45e6-4c45-8a8f-3971c882339a",
-      created_at: "2024-11-30T06:35:01.232Z",
-      status: "active",
-      name: "Stripe",
-      description:
-        "Stripe is a payment processing platform that enables businesses to accept online payments.",
-      events: [
-        "PAYMENT_SUCCEEDED",
-        "PAYMENT_FAILED",
-        "REFUND_CREATED",
-        "SUBSCRIPTION_CANCELED",
-      ],
-      thumbnail: "https://d21r3yo3pas5u.cloudfront.net/webhook/stripe.png",
-    },
-  },
-];
-
 const Subscription = () => {
   const navigate = useNavigate();
+
+  const [list, setList] = useState<ISubscription[]>([]);
+
   const [eventList, setEventList] = useState<string[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const fetchList = async () => {
+    const result = await getSubscription();
+    setList(result.data);
+  };
 
   const handleEventList = (list: string[]) => {
     setEventList(list);
   };
+
+  const handleDelete = () => {
+    if (selectedId) {
+      deleteSubscription(selectedId);
+      setSelectedId(null);
+      fetchList();
+    }
+  };
+
+  useEffect(() => {
+    fetchList();
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -143,43 +123,56 @@ const Subscription = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {subscriptions.map((subscription) => (
-                <TableRow key={subscription.id}>
-                  <TableCell className="font-medium flex items-center gap-2">
-                    <img
-                      src={subscription.source.thumbnail}
-                      alt={`${subscription.source.name} thumbnail`}
-                      className="w-10 h-10 object-cover rounded"
-                    />
-                    {subscription.source.name}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(subscription.created_at).toDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <SheetTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="ml-2"
-                        onClick={() =>
-                          handleEventList(subscription.source.events)
-                        }
-                      >
-                        <Pencil className="h-4 w-4 mr-1" />
-                        Edit
-                      </Button>
-                    </SheetTrigger>
+              {list.length > 0 ? (
+                list.map((subscription) => (
+                  <TableRow key={subscription.id}>
+                    <TableCell className="font-medium flex items-center gap-2">
+                      <img
+                        src={subscription.source.thumbnail}
+                        alt={`${subscription.source.name} thumbnail`}
+                        className="w-10 h-10 object-cover rounded"
+                      />
+                      {subscription.source.name}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(subscription.created_at).toDateString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <SheetTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="ml-2"
+                          onClick={() =>
+                            handleEventList(subscription.source.events)
+                          }
+                        >
+                          <Pencil className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
+                      </SheetTrigger>
 
-                    <AlertDialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="ml-2">
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        Delete
-                      </Button>
-                    </AlertDialogTrigger>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="ml-2"
+                          onClick={() => setSelectedId(subscription.id)}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Delete
+                        </Button>
+                      </AlertDialogTrigger>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center">
+                    <DataNotFound></DataNotFound>
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
 
@@ -192,7 +185,9 @@ const Subscription = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction>Delete</AlertDialogAction>
+              <AlertDialogAction onClick={handleDelete}>
+                Delete
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

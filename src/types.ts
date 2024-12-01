@@ -26,3 +26,12 @@ export interface ISource {
   events: string[];
   thumbnail: string;
 }
+
+export interface ISubscription {
+  id: string;
+  created_at: string;
+  status: string;
+  events: string[];
+  callback_url: string;
+  source: ISource;
+}

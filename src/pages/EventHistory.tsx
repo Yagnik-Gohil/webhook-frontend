@@ -74,9 +74,8 @@ const EventHistory = () => {
   };
 
   const handleReset = () => {
-    setSource(undefined);
-    setEvent(undefined);
-  }
+    window.location.reload();
+  };
 
   useEffect(() => {
     fetchList();
@@ -105,16 +104,18 @@ const EventHistory = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {serviceList.map((service) => {
-                  return (
-                    <SelectItem value={service.id} key={service.id}>
-                      <div className="flex gap-4">
-                        <img src={service.thumbnail} className="w-6 h-6"></img>
-                        <p>{service.name}</p>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
+                {serviceList.map((service) => (
+                  <SelectItem value={service.id} key={service.id}>
+                    <div className="flex gap-4">
+                      <img
+                        src={service.thumbnail}
+                        className="w-6 h-6"
+                        alt={service.name}
+                      />
+                      <p>{service.name}</p>
+                    </div>
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -124,13 +125,11 @@ const EventHistory = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {eventList.map((event) => {
-                  return (
-                    <SelectItem value={event} key={event}>
-                      <p> {event}</p>
-                    </SelectItem>
-                  );
-                })}
+                {eventList.map((event) => (
+                  <SelectItem value={event} key={event}>
+                    <p>{event}</p>
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
