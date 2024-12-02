@@ -3,6 +3,7 @@ export interface IEvent {
   event: string;
   payload: { id: string };
   thumbnail: string;
+  created_at: string;
 }
 export interface IEventHistory {
   id: string;

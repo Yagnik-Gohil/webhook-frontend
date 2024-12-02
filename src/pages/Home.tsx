@@ -38,6 +38,13 @@ const Home = () => {
         dispatch(addEvent(data));
       });
 
+      socket.on("error", (data: { status: number; message: string }) => {
+        if (data.status === 401) {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+      });
+
       return () => {
         socket.off("webhook-event");
       };
@@ -74,11 +81,7 @@ const Home = () => {
                 <TableCell>{item.event}</TableCell>
                 <TableCell>{`${item.source} event occurred`}</TableCell>
                 <TableCell>
-                  {new Date().toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "numeric",
-                    hour12: true,
-                  })}
+                  {item.created_at}
                 </TableCell>
                 <TableCell className="text-end">
                   <Sheet>
